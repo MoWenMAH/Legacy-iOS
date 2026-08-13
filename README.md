@@ -1,5 +1,5 @@
 
-# 📱 iPhone 5s Downgrade / Flashing Log | iPhone 5s 降级/刷机踩坑记录
+# 📱 iPhone 5s Downgrade | iPhone 5s 
 
 > **Note / 说明**: Click the sections below to toggle between English and Chinese content.
 > 点击下方展开栏即可切换中/英文内容。
