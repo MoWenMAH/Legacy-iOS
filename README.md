@@ -9,6 +9,14 @@
 
 <a name="english"></a>
 ## English
+### I. Nonsense
+By the time you see this project, I will have already uninstalled QQ and Discord, transferred all non-study-related files on my computer to an external hard drive, and handed it over to my parents for safekeeping. Today is August 9, 2026, with less than 10 months to go before the Gaokao (June 5, 2027). Time is flying by so fast. My high school days are coming to an end soon—it makes me so sad QwQ.
+
+(For those unfamiliar with the Gaokao, you can think of it as an SAT taken by over 600,000 students, the New York Times wasn't exaggerating when it described it as 'thousands of troops crossing a single-log bridge. XD The Gaokao is immensely important to me—it not only determines whether I can get into my favotite university, but also defines the future of both myself and my family. Plus, for me, I only get one shot at this.)
+
+So I must put everything else on hold for the next 10 months to focus entirely on prep.
+I've temporarily pushed all my projects to GitHub (this is one of them)so that I can pick them back up after the Gaokao is over, starting after June 10, 2027.
+
 # Goal: Downgrade an iPhone 5s (A7 chip, running iOS 12.5.7) to iOS 10.3.3.
 
 Friends from the jailbreak community recommended Legacy-iOS-Kit (referred to as kits below). Since kits is a Linux tool, I decided to use a Kali Linux (2025.02) virtual machine I already had set up in VMware from my network security self-study. Being Debian-based, Kali should theoretically run kits fine.
@@ -70,6 +78,13 @@ I ran kits once more on the new build, and it worked—it smoothly passed the se
 
 <a name="chinese"></a>
 ## 中文
+### 一、废话
+当你看到这个项目时，我已经卸载了 QQ 和 discord，并把电脑上所有与学习无关的资源，剪贴到了一个硬盘上，交给父亲保管。今天是 Aug 9, 2026，距离高考还有不到 10 个月的时间 (Jun. 5, 2027)。时间过得真快。我的高中生活很快就要结束了，这让我很伤心 QwQ。
+
+（For those unfamiliar with the Gaokao, you can think of it as an SAT taken by over 600,000 students, the New York Times wasn't exaggerating when it described it as 'thousands of troops crossing a single-log bridge. XD The Gaokao is immensely important to me—it not only determines whether I can get into my favorite university, but also defines the future of both myself and my family. Plus, for me, I only get one shot at this.)
+
+想必没有必要多说它是多么的残酷和重要，我必须在接下来的10个月里暂停所有其他事情，放下一切准备高考。
+我把我所有的项目都暂时存在 github 上这个项目（这是其中之一），以便高考后，也就是 Jun. 10, 2027 以后重新启动。
 
 # 目标：把iphone5s(A7,OS is ios12.5.7),降级为ios10.3.3
 
