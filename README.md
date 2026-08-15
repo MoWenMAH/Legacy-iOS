@@ -1,149 +1,103 @@
-
-# 📱 iPhone 5s Downgrade | iPhone 5s 
-
-> **Note / 说明**: Click the sections below to toggle between English and Chinese content.
-> 点击下方展开栏即可切换中/英文内容。
-
----
+# iPhone 5s iOS 10.3.3 Downgrade
 
 <details open>
-<summary><b>🇺🇸 English Version</b></summary>
+<summary>🇺🇸 English</summary>
 
-<br>
+Goal: Downgrade an iPhone 5s (A7 chip, running iOS 12.5.7) to iOS 10.3.3.
 
-### 💻 Hardware Specifications
+Friends from the jailbreak community recommended Legacy-iOS-Kit (referred to as kits below). Since kits is a Linux tool, I decided to use a Kali Linux (2025.02) virtual machine I already had set up in VMware from my network security self-study. Being Debian-based, Kali should theoretically run kits fine.
 
-| Hardware | Model / Specifications |
-| :--- | :--- |
-| **Motherboard** | Qitian M4330 |
-| **CPU** | Intel Core i7-3770K |
-| **Target Device** | iPhone 5s (A7 Chip) |
+Since my host machine (Windows) is in Mainland China, I needed to route the VM's traffic through a proxy to avoid network blocks. I used V2RayN:
 
----
+Opened Command Prompt on the Windows host and ran ipconfig to find its local IPv4 address (192.168....).
 
-### 1. VM Attempts under Windows 10 (1903)
+Enabled "Allow LAN Connection" in V2RayN, which assigned port 10809.
 
-* **Environment**: VMware 17 + Kali Linux 2025.02 (VM)
-* **Execution**:
-* curl -I https://www.google.com
-sudo apt update
-sudo apt install git -y
-git clone https://github.com/LukeZGD/Legacy-iOS-Kit.git
-cd Legacy-iOS-Kit
-  * Attempted to run Legacy-iOS-Kit inside the virtual machine.
-* **Issue Encountered**: 
-  * Stuck infinitely at `Stage: SETUP`.
-  * **Log Analysis**: The tool attempted to invoke the `gaster` exploit for downgrading, which is incompatible/unsupported on the A7 chip.
-* **Workaround (Jailbreak & Set Generator)**: 
-  * Decided to jailbreak the iPhone and use `dimentio` to fix/set the Generator value to restore with SHSH blobs.
-  * **Tools Used**: 3uTools (爱思助手), Sileo.
-  * **Steps**: Installed OpenSSH via Sileo after jailbreaking, then opened the SSH tunnel using 3uTools.
-* **Result**: 
-  * Still stuck at `Stage: SETUP`.
-  * **Troubleshooting**: Suspected USB passthrough/permission issues in Kali VM. Switched the VM to **Ubuntu 22.04**, but the issue persisted because Legacy-iOS-Kit continued attempting `gaster`.
-  * **Decision**: Abandoned Legacy-iOS-Kit and switched to **FutureRestore**.
+In the VM terminal, I configured the proxy and tested the connection:
 
----
+It returned a proper HTTP response, confirming the proxy was working. Then I proceeded with the setup:
 
-### 2. FutureRestore Attempts under Windows
+However, Legacy-iOS-Kit got stuck at Stage: SETUP. Looking through the logs, I realized it hung when trying to invoke gaster for injection. gaster requires millisecond-level timing over USB, and the USB passthrough latency between the Windows host and the VM was causing packet injection to fail consistently.
 
-* **Execution**: 
-  1. Used Legacy-iOS-Kit to fetch/download the iOS 10.3.3 `.shsh2` blobs and `.ipsw` firmware.
-  2. Fed both files into FutureRestore.
-* **Issue Encountered**: Threw `Error -8`.
-* **Root Cause Analysis**: 
-  * Noticed that the iPhone entered recovery mode *after* FutureRestore already logged `"Failed to enter recovery-mode"`.
-  * The Windows Apple driver response time was too sluggish (exploit payload injection requires millisecond-level precision).
-  * **Decision**: Completely abandoned Windows and moved to bare-metal **Kali USB Boot**.
+Continuing with gaster meant I had to move away from virtual machines and run native Linux. But without a spare external hard drive to install Linux on, Gemini suggested a workaround: jailbreak the iPhone, install dimentio to set the generator, and let kits bypass Apple's checks without relying on gaster.
 
----
+So I jailbroke the phone using 3uTools (Sileo was installed as the package manager), installed OpenSSH and dimentio via Sileo, connected over SSH using 3uTools, and set the generator:
 
-### 3. Bare-Metal Kali USB Boot
+It succeeded, but when I ran kits again, it still froze at Stage: SETUP. The logs showed that kits was still trying to invoke gaster. It seems kits strictly relies on gaster for this check (or at least that's my guess; only the developer knows for sure).
 
-* **Environment**: Kali USB Boot 2025.02 (Live OS on bare metal)
-* **Preparation**: Configured screen recording environment to capture logs.
-* sudo apt update
-sudo apt install ffmpeg
-sudo apt install obs-studio
-* **Issue Encountered**: Running Legacy-iOS-Kit was *still* stuck at `Stage: SETUP`.
-* **Workaround**: 
-  * Suspected outdated repositories or broken USB library dependencies in the Kali image.
-  * Upgraded the system packages to **Kali Linux 2026-W33 (Latest)**.
-* **Final Result**: 
-  * 🎉 **Successfully passed `Stage: SETUP` and proceeded to the next stage!**
-  * *Speculated Cause*: Likely resolved by updated USB stack/drivers in the latest Kali kernel release combined with native physical USB controller access.
+I shared the situation with my friend, who suggested trying FutureRestore since it runs natively on Windows, eliminating VM USB passthrough latency. I downloaded the iOS 10.3.3 .shsh2 blob and the matching .ipsw firmware using Legacy-iOS-Kit, then fed them into FutureRestore.
+
+It threw Error -8. I noticed an interesting pattern, though: FutureRestore reported "failed to enter recovery mode" before the iPhone actually entered recovery mode. This suggested Windows itself was experiencing USB communication delay, meaning a pure Windows setup was out of the question, too.
+
+I bit the bullet and bought a 64GB Kingston USB drive, flashed Kali USB Live Boot (2025.02) onto it, and downloaded V2RayN for Linux on GitHub. After disabling Legacy Mode in my older motherboard's BIOS, I booted straight into live Kali:
+
+```
+# Prerequisite for OBS
+```
+
+# To record the process
+
+I repeated the same restore steps as before.
+
+Unbelievably, Legacy-iOS-Kit got stuck at Stage: SETUP yet again. At this point, I was out of ideas and suspected it might be an issue with that specific Kali build. As a last resort, I grabbed the latest weekly build (2026-W33) from kali.org.
+
+I ran kits once more on the new build, and it worked—it smoothly passed the setup stage and moved to the next step. I still don't know the exact root cause, but a clean, updated environment finally did the trick.
 
 </details>
 
----
-
 <details>
-<summary><b>🇨🇳 中文版 (Chinese Version)</b></summary>
+<summary>🇨🇳 中文</summary>
 
-<br>
+目标：把iphone5s(A7,OS is ios12.5.7),降级为ios10.3.3
 
-### 💻 硬件设备 (Hardware)
+Jailbreak圈的朋友推荐我用Legacy-iOS-Kit(下面简称kits),kits是Linux软件，恰好之前自学网络安全时在vmware上安装了kali linud(2025.02)虚拟机，kali是debian内核，理论上可以运行kits
 
-| 设备名称 (Device) | 型号 / 规格 (Model / Specs) |
-| :--- | :--- |
-| **主板 (Motherboard)** | Qitian M4330 |
-| **CPU** | Intel Core i7-3770K |
-| **目标设备 (Target Device)** | iPhone 5s (A7 Chip) |
+由于宿主机(Windows)在CN网络环境下，需要给虚拟机配置代理防止程序被墙，这里我用的是V2RayN
 
----
+1.打开宿主机的cmd，用ipconfig查看ipv4地址：192.168....
 
-### 一、 Windows 10 (1903) 环境下的虚拟机尝试
+2.在V2RayN种允许来自互联网的连接，它给我分配了10809端口
 
-* **测试环境**: VMware 17 + 虚拟机 Kali Linux 2025.02
-* **操作过程**:
-* 由于处于国内网络环境，先配置个代理
-export http_proxy="http://proxy" export https_proxy="http://proxy" 
-ping一下google看看有没有成功
-curl -I https://www.google.com
-sudo apt update
-sudo apt install git -y
-git clone https://github.com/LukeZGD/Legacy-iOS-Kit.git
-cd Legacy-iOS-Kit
-  * 试图通过虚拟机运行 Legacy-iOS-Kit 进行降级操作。
-* **遭遇问题**: 
-  * 过程卡在 `Stage: SETUP`。
-  * **日志分析**: 工具试图调用 `gaster` 漏洞去降级，但该漏洞对 A7 芯片不适配/兼容。
-* **应对策略 (越狱固化)**: 
-  * 决定通过 iPhone 越狱，使用 `dimentio` 固定 Generator，从而实现配合 SHSH 刷机。
-  * **越狱工具**: 爱思助手, Sileo
-  * **具体操作**: 越狱后在 Sileo 中安装 SSH，用爱思助手打开 SSH 通道。
-* **结果**: 
-  * 依然卡在 `Stage: SETUP`。
-  * **原因排查**: 怀疑是 Kali 虚拟机系统的 USB 权限问题，随后将虚拟机换成 **Ubuntu 22.04**。但结果依然卡在 `Stage: SETUP`（因为 Legacy-iOS-Kit 仍在强行尝试调用 `gaster` 漏洞）。
-  * **最终决定**: 放弃 Legacy-iOS-Kit，改用 **FutureRestore**。
+```
+#在虚拟机的终端连接代理
+#ping一下google看看有没有成功
+```
 
----
+显示了一大串东西，看来是代理配置成功了，那现在就开始刷机
 
-### 二、 Windows 环境下的 FutureRestore 尝试
+#更新一下kali的apt源
+#下载安装git
+#下载安装Legacy-iOS-Kit
 
-* **操作过程**: 
-  1. 使用 Legacy-iOS-Kit 下载 iOS 10.3.3 的 `.shsh2` 签名文件和 `.ipsw` 固件。
-  2. 将文件注入 FutureRestore 执行刷机。
-* **遭遇问题**: 提示报错 `Error -8`。
-* **原因分析**: 
-  * 观察发现：FutureRestore 在终端提示 *"无法进入 recovery-mode"* **之后**，iPhone 才迟钝地进入恢复模式。
-  * 怀疑是 Windows 系统对 Apple 驱动的响应过慢。刷机抓取漏洞的时间窗口是毫秒级的，因此彻底放弃 Windows，改用 **Kali USB Boot 实机物理系统**。
+启动kits
 
----
+结果Legacy-iOS-Kit 卡在 Stage: SETUP。分析一下日志，当我发现kits尝试调用gaster注入时，我明白为什么了：gaster对usb通信的要求是毫秒级的，虚拟机和宿主机存在通信延迟，导致gaster根本没机会注入数据包
 
-### 三、 物理机 Kali USB Boot 尝试
+如果我继续用gaster，就必须放弃虚拟机，在linux环境下进行刷机，但我手头没有多余的移动硬盘去安装操作系统
 
-* **测试环境**: Kali USB Boot 2025.02 (物理机原生运行)
-* **前期准备**: 配置录屏环境记录刷机过程。
-* sudo apt update
-sudo apt install ffmpeg
-sudo apt install obs-studio
-* **遭遇问题**: 运行 Legacy-iOS-Kit 依然卡在 `Stage: SETUP`。
-* **应对策略**: 
-  * 怀疑是 Kali 系统软件源或底层依赖版本过旧。
-  * 执行系统更新，将系统升至 **Kali Linux 2026-W33 (Latest)**。
-* **最终结果**: 
-  * 🎉 **成功越过 `Stage: SETUP`，顺利进入下一阶段！**
-  * *原因推测*: 可能与新版系统底层的 USB 驱动更新及物理机直连 USB 权限修复有关。
+gemini给了我一种解决方案：将iphone越狱，然后安装dimentio插件，用它固定generator，这样kits就可以实现不用gaster也能绕过apple的检查
+
+越狱软件：Sileo
+
+用爱思助手越狱后在 Sileo 中安装 SSH通道插件和dimentio插件，用爱思助手连接SSH通道:
+#赋予root权限
+#固定generator
+
+Made it!现在kits试一下，结果还是卡在Stage: SETUP，日志显示kits依旧调用了gaster，看来kits只能用gaster实现绕过apple的检查（这只是我的猜测，真实原因要问作者）
+
+我把我的情况说给朋友，他说我可以尝试用FutureRestore,这个是一个windows软件，所以我不需要再用虚拟机，这样就没有了虚拟机与宿主机的通信延迟
+
+用 Legacy-iOS-Kit 下载 iOS 10.3.3 的 .shsh2 文件和适配iphone 5s的ios10.3.3的 .ipsw 固件，将其注入 FutureRestore。
+结果出现 error -8 错误。虽然失败了但我发现了一个很有意思的现象：FutureRestore 在终端提示“无法进入 recovery-mode”之后，iPhone 才进入恢复模式，这说明windows与iphone间本身就存在通信延迟，这样看来，就只能彻底放弃windiws环境
+
+我破费买了一个kingstone 64g的u盘，刷入Kali USB Boot 2025.02，在github上下载v2rayn for linux
+进入BIOS将兼容模式关闭（主板比较老，bios还有legact启动方式），进入kali
+#安装obs的前置
+#安装obs记录下这一切
+之后的步骤和向前一样
+结果运行 Legacy-iOS-Kit 依然卡在 Stage: SETUP。到这我就不知道到底是什么原因了，我怀疑是kali本身的问题，抱着碰运气的心态去kali.org下载了 2026-W33 (latest) 的kali
+再运行kits发现成功了，kits成功跳过setup阶段进入下一个阶段，具体原因目前未知
+
+特别致谢：@PermissionDog @
 
 </details>
