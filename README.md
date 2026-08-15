@@ -74,6 +74,10 @@ Unbelievably, Legacy-iOS-Kit got stuck at Stage: SETUP yet again. At this point,
 
 I ran kits once more on the new build, and it worked—it smoothly passed the setup stage and moved to the next step. I still don't know the exact root cause, but a clean, updated environment finally did the trick.
 
+###  Community
+Discord:https://discord.gg/8urjC42jE3
+
+
 ---
 
 <a name="chinese"></a>
@@ -154,8 +158,11 @@ sudo apt install obs-studio	#安装obs记录下这一切
 结果运行 Legacy-iOS-Kit 依然卡在 Stage: SETUP。到这我就不知道到底是什么原因了，我怀疑是kali本身的问题，抱着碰运气的心态去kali.org下载了 2026-W33 (latest) 的kali
 
 再运行kits发现成功了，kits成功跳过setup阶段进入下一个阶段，具体原因目前未知
+### 社区
 
-特别致谢：@PermissionDog @
+Discord:https://discord.gg/8urjC42jE3
+
+QQ:316834843
 
 ---
 
